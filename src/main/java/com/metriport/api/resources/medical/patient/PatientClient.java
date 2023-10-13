@@ -3,6 +3,7 @@
  */
 package com.metriport.api.resources.medical.patient;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.metriport.api.core.ApiError;
 import com.metriport.api.core.ClientOptions;
 import com.metriport.api.core.ObjectMappers;
@@ -11,9 +12,9 @@ import com.metriport.api.resources.medical.patient.requests.PatientCreate;
 import com.metriport.api.resources.medical.patient.requests.PatientDelete;
 import com.metriport.api.resources.medical.patient.requests.PatientList;
 import com.metriport.api.resources.medical.patient.requests.PatientUpdate;
-import com.metriport.api.resources.medical.patient.types.ListPatientsResponse;
 import com.metriport.api.resources.medical.patient.types.Patient;
 import java.io.IOException;
+import java.util.List;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -162,20 +163,11 @@ public class PatientClient {
     /**
      * Lists all Patients receiving care at the specified Facility.
      */
-    public ListPatientsResponse list() {
-        return list(PatientList.builder().build());
-    }
-
-    /**
-     * Lists all Patients receiving care at the specified Facility.
-     */
-    public ListPatientsResponse list(PatientList request, RequestOptions requestOptions) {
+    public List<Patient> list(PatientList request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("patient");
-        if (request.getFacilityId().isPresent()) {
-            httpUrl.addQueryParameter("facilityId", request.getFacilityId().get());
-        }
+        httpUrl.addQueryParameter("facilityId", request.getFacilityId());
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
@@ -186,7 +178,8 @@ public class PatientClient {
             Response response =
                     clientOptions.httpClient().newCall(okhttpRequest).execute();
             if (response.isSuccessful()) {
-                return ObjectMappers.JSON_MAPPER.readValue(response.body().string(), ListPatientsResponse.class);
+                return ObjectMappers.JSON_MAPPER.readValue(
+                        response.body().string(), new TypeReference<List<Patient>>() {});
             }
             throw new ApiError(
                     response.code(),
@@ -199,7 +192,7 @@ public class PatientClient {
     /**
      * Lists all Patients receiving care at the specified Facility.
      */
-    public ListPatientsResponse list(PatientList request) {
+    public List<Patient> list(PatientList request) {
         return list(request, null);
     }
 

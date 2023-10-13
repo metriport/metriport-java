@@ -7,18 +7,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
 import java.util.Objects;
-import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonDeserialize(builder = PatientList.Builder.class)
 public final class PatientList {
-    private final Optional<String> facilityId;
+    private final String facilityId;
 
-    private PatientList(Optional<String> facilityId) {
+    private PatientList(String facilityId) {
         this.facilityId = facilityId;
     }
 
@@ -26,7 +24,7 @@ public final class PatientList {
      * @return The ID of the Facility where the patient is receiving care.
      */
     @JsonProperty("facilityId")
-    public Optional<String> getFacilityId() {
+    public String getFacilityId() {
         return facilityId;
     }
 
@@ -50,32 +48,44 @@ public final class PatientList {
         return ObjectMappers.stringify(this);
     }
 
-    public static Builder builder() {
+    public static FacilityIdStage builder() {
         return new Builder();
     }
 
+    public interface FacilityIdStage {
+        _FinalStage facilityId(String facilityId);
+
+        Builder from(PatientList other);
+    }
+
+    public interface _FinalStage {
+        PatientList build();
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder {
-        private Optional<String> facilityId = Optional.empty();
+    public static final class Builder implements FacilityIdStage, _FinalStage {
+        private String facilityId;
 
         private Builder() {}
 
+        @Override
         public Builder from(PatientList other) {
             facilityId(other.getFacilityId());
             return this;
         }
 
-        @JsonSetter(value = "facilityId", nulls = Nulls.SKIP)
-        public Builder facilityId(Optional<String> facilityId) {
+        /**
+         * <p>The ID of the Facility where the patient is receiving care.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @Override
+        @JsonSetter("facilityId")
+        public _FinalStage facilityId(String facilityId) {
             this.facilityId = facilityId;
             return this;
         }
 
-        public Builder facilityId(String facilityId) {
-            this.facilityId = Optional.of(facilityId);
-            return this;
-        }
-
+        @Override
         public PatientList build() {
             return new PatientList(facilityId);
         }

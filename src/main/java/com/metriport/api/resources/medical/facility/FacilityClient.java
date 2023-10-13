@@ -3,14 +3,15 @@
  */
 package com.metriport.api.resources.medical.facility;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.metriport.api.core.ApiError;
 import com.metriport.api.core.ClientOptions;
 import com.metriport.api.core.ObjectMappers;
 import com.metriport.api.core.RequestOptions;
 import com.metriport.api.resources.medical.facility.types.BaseFacility;
 import com.metriport.api.resources.medical.facility.types.Facility;
-import com.metriport.api.resources.medical.facility.types.ListFacilitiesResponse;
 import java.io.IOException;
+import java.util.List;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -149,7 +150,7 @@ public class FacilityClient {
     /**
      * Lists all of your Facilities.
      */
-    public ListFacilitiesResponse list(RequestOptions requestOptions) {
+    public List<Facility> list(RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("facility")
@@ -164,7 +165,8 @@ public class FacilityClient {
             Response response =
                     clientOptions.httpClient().newCall(okhttpRequest).execute();
             if (response.isSuccessful()) {
-                return ObjectMappers.JSON_MAPPER.readValue(response.body().string(), ListFacilitiesResponse.class);
+                return ObjectMappers.JSON_MAPPER.readValue(
+                        response.body().string(), new TypeReference<List<Facility>>() {});
             }
             throw new ApiError(
                     response.code(),
@@ -177,7 +179,7 @@ public class FacilityClient {
     /**
      * Lists all of your Facilities.
      */
-    public ListFacilitiesResponse list() {
+    public List<Facility> list() {
         return list(null);
     }
 }
