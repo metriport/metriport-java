@@ -65,10 +65,10 @@ a subclass of [ApiError](src/main/java/com/metriport/api/core/ApiError.java)
 will be thrown:
 
 ```ts
-import com.assemblyai.api.core.ApiError;
+import com.metriport.api.core.ApiError;
 
 try {
-  aai.medical().organization.create(...);
+  api.medical().organization.create(...);
 } catch (ApiError error) {
   System.out.println(error.getBody());
   System.out.println(error.getStatusCode());
