@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.patient.requests;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
 import com.metriport.api.resources.medical.patient.types.BasePatient;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -19,9 +23,12 @@ public final class PatientCreate {
 
     private final BasePatient body;
 
-    private PatientCreate(String facilityId, BasePatient body) {
+    private final Map<String, Object> additionalProperties;
+
+    private PatientCreate(String facilityId, BasePatient body, Map<String, Object> additionalProperties) {
         this.facilityId = facilityId;
         this.body = body;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -41,6 +48,11 @@ public final class PatientCreate {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof PatientCreate && equalTo((PatientCreate) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(PatientCreate other) {
@@ -81,6 +93,9 @@ public final class PatientCreate {
 
         private BasePatient body;
 
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
         private Builder() {}
 
         @Override
@@ -110,7 +125,7 @@ public final class PatientCreate {
 
         @Override
         public PatientCreate build() {
-            return new PatientCreate(facilityId, body);
+            return new PatientCreate(facilityId, body, additionalProperties);
         }
     }
 }

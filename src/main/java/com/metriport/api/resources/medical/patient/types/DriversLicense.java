@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.patient.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,6 +13,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
 import com.metriport.api.resources.commons.types.UsState;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -25,11 +29,19 @@ public final class DriversLicense {
 
     private final Optional<Period> period;
 
-    private DriversLicense(UsState state, String value, Optional<String> assigner, Optional<Period> period) {
+    private final Map<String, Object> additionalProperties;
+
+    private DriversLicense(
+            UsState state,
+            String value,
+            Optional<String> assigner,
+            Optional<Period> period,
+            Map<String, Object> additionalProperties) {
         this.state = state;
         this.value = value;
         this.assigner = assigner;
         this.period = period;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -62,6 +74,11 @@ public final class DriversLicense {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof DriversLicense && equalTo((DriversLicense) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(DriversLicense other) {
@@ -116,6 +133,9 @@ public final class DriversLicense {
         private Optional<Period> period = Optional.empty();
 
         private Optional<String> assigner = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -178,7 +198,7 @@ public final class DriversLicense {
 
         @Override
         public DriversLicense build() {
-            return new DriversLicense(state, value, assigner, period);
+            return new DriversLicense(state, value, assigner, period, additionalProperties);
         }
     }
 }

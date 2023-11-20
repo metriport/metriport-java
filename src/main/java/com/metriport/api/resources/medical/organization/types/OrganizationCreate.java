@@ -17,24 +17,20 @@ import java.util.Map;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonDeserialize(builder = Organization.Builder.class)
-public final class Organization implements IOrganizationCreate {
+@JsonDeserialize(builder = OrganizationCreate.Builder.class)
+public final class OrganizationCreate implements IOrganizationCreate {
     private final String name;
 
     private final OrgType type;
 
     private final Address location;
 
-    private final String id;
-
     private final Map<String, Object> additionalProperties;
 
-    private Organization(
-            String name, OrgType type, Address location, String id, Map<String, Object> additionalProperties) {
+    private OrganizationCreate(String name, OrgType type, Address location, Map<String, Object> additionalProperties) {
         this.name = name;
         this.type = type;
         this.location = location;
-        this.id = id;
         this.additionalProperties = additionalProperties;
     }
 
@@ -64,19 +60,10 @@ public final class Organization implements IOrganizationCreate {
         return location;
     }
 
-    /**
-     * @return The ID assigned to your organization.
-     * This ID will be used to uniquely identify your organization in medical documents.
-     */
-    @JsonProperty("id")
-    public String getId() {
-        return id;
-    }
-
     @Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof Organization && equalTo((Organization) other);
+        return other instanceof OrganizationCreate && equalTo((OrganizationCreate) other);
     }
 
     @JsonAnyGetter
@@ -84,16 +71,13 @@ public final class Organization implements IOrganizationCreate {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(Organization other) {
-        return name.equals(other.name)
-                && type.equals(other.type)
-                && location.equals(other.location)
-                && id.equals(other.id);
+    private boolean equalTo(OrganizationCreate other) {
+        return name.equals(other.name) && type.equals(other.type) && location.equals(other.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.name, this.type, this.location, this.id);
+        return Objects.hash(this.name, this.type, this.location);
     }
 
     @Override
@@ -108,7 +92,7 @@ public final class Organization implements IOrganizationCreate {
     public interface NameStage {
         TypeStage name(String name);
 
-        Builder from(Organization other);
+        Builder from(OrganizationCreate other);
     }
 
     public interface TypeStage {
@@ -116,26 +100,20 @@ public final class Organization implements IOrganizationCreate {
     }
 
     public interface LocationStage {
-        IdStage location(Address location);
-    }
-
-    public interface IdStage {
-        _FinalStage id(String id);
+        _FinalStage location(Address location);
     }
 
     public interface _FinalStage {
-        Organization build();
+        OrganizationCreate build();
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements NameStage, TypeStage, LocationStage, IdStage, _FinalStage {
+    public static final class Builder implements NameStage, TypeStage, LocationStage, _FinalStage {
         private String name;
 
         private OrgType type;
 
         private Address location;
-
-        private String id;
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -143,11 +121,10 @@ public final class Organization implements IOrganizationCreate {
         private Builder() {}
 
         @Override
-        public Builder from(Organization other) {
+        public Builder from(OrganizationCreate other) {
             name(other.getName());
             type(other.getType());
             location(other.getLocation());
-            id(other.getId());
             return this;
         }
 
@@ -177,26 +154,14 @@ public final class Organization implements IOrganizationCreate {
 
         @Override
         @JsonSetter("location")
-        public IdStage location(Address location) {
+        public _FinalStage location(Address location) {
             this.location = location;
             return this;
         }
 
-        /**
-         * <p>The ID assigned to your organization.
-         * This ID will be used to uniquely identify your organization in medical documents.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
         @Override
-        @JsonSetter("id")
-        public _FinalStage id(String id) {
-            this.id = id;
-            return this;
-        }
-
-        @Override
-        public Organization build() {
-            return new Organization(name, type, location, id, additionalProperties);
+        public OrganizationCreate build() {
+            return new OrganizationCreate(name, type, location, additionalProperties);
         }
     }
 }

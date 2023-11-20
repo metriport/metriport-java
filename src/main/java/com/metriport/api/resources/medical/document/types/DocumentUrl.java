@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.document.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,8 +22,11 @@ import java.util.Optional;
 public final class DocumentUrl {
     private final Optional<String> url;
 
-    private DocumentUrl(Optional<String> url) {
+    private final Map<String, Object> additionalProperties;
+
+    private DocumentUrl(Optional<String> url, Map<String, Object> additionalProperties) {
         this.url = url;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -34,6 +41,11 @@ public final class DocumentUrl {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof DocumentUrl && equalTo((DocumentUrl) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(DocumentUrl other) {
@@ -58,6 +70,9 @@ public final class DocumentUrl {
     public static final class Builder {
         private Optional<String> url = Optional.empty();
 
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
         private Builder() {}
 
         public Builder from(DocumentUrl other) {
@@ -77,7 +92,7 @@ public final class DocumentUrl {
         }
 
         public DocumentUrl build() {
-            return new DocumentUrl(url);
+            return new DocumentUrl(url, additionalProperties);
         }
     }
 }

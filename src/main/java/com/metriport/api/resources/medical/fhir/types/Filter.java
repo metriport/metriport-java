@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.fhir.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -22,10 +26,17 @@ public final class Filter {
 
     private final Optional<String> dateTo;
 
-    private Filter(String resources, Optional<String> dateFrom, Optional<String> dateTo) {
+    private final Map<String, Object> additionalProperties;
+
+    private Filter(
+            String resources,
+            Optional<String> dateFrom,
+            Optional<String> dateTo,
+            Map<String, Object> additionalProperties) {
         this.resources = resources;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -61,6 +72,11 @@ public final class Filter {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof Filter && equalTo((Filter) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(Filter other) {
@@ -106,6 +122,9 @@ public final class Filter {
         private Optional<String> dateTo = Optional.empty();
 
         private Optional<String> dateFrom = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -169,7 +188,7 @@ public final class Filter {
 
         @Override
         public Filter build() {
-            return new Filter(resources, dateFrom, dateTo);
+            return new Filter(resources, dateFrom, dateTo, additionalProperties);
         }
     }
 }

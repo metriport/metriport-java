@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.facility.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,6 +13,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
 import com.metriport.api.resources.commons.types.Address;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,14 +33,23 @@ public final class Facility implements IBaseFacility {
 
     private final String id;
 
+    private final Map<String, Object> additionalProperties;
+
     private Facility(
-            String name, String npi, Optional<String> tin, Optional<Boolean> active, Address address, String id) {
+            String name,
+            String npi,
+            Optional<String> tin,
+            Optional<Boolean> active,
+            Address address,
+            String id,
+            Map<String, Object> additionalProperties) {
         this.name = name;
         this.npi = npi;
         this.tin = tin;
         this.active = active;
         this.address = address;
         this.id = id;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -82,7 +95,8 @@ public final class Facility implements IBaseFacility {
     }
 
     /**
-     * @return The ID assigned to this Facility. This ID will be used to uniquely identify this Facility in medical documents.
+     * @return The ID assigned to this Facility. This ID will be used
+     * to uniquely identify this Facility in medical documents.
      */
     @JsonProperty("id")
     public String getId() {
@@ -93,6 +107,11 @@ public final class Facility implements IBaseFacility {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof Facility && equalTo((Facility) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(Facility other) {
@@ -162,6 +181,9 @@ public final class Facility implements IBaseFacility {
 
         private Optional<String> tin = Optional.empty();
 
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
         private Builder() {}
 
         @Override
@@ -205,7 +227,8 @@ public final class Facility implements IBaseFacility {
         }
 
         /**
-         * <p>The ID assigned to this Facility. This ID will be used to uniquely identify this Facility in medical documents.</p>
+         * <p>The ID assigned to this Facility. This ID will be used
+         * to uniquely identify this Facility in medical documents.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @Override
@@ -251,7 +274,7 @@ public final class Facility implements IBaseFacility {
 
         @Override
         public Facility build() {
-            return new Facility(name, npi, tin, active, address, id);
+            return new Facility(name, npi, tin, active, address, id, additionalProperties);
         }
     }
 }

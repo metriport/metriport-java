@@ -3,15 +3,14 @@
  */
 package com.metriport.api.resources.medical.facility;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.metriport.api.core.ApiError;
 import com.metriport.api.core.ClientOptions;
 import com.metriport.api.core.ObjectMappers;
 import com.metriport.api.core.RequestOptions;
 import com.metriport.api.resources.medical.facility.types.BaseFacility;
 import com.metriport.api.resources.medical.facility.types.Facility;
+import com.metriport.api.resources.medical.facility.types.ListFacilitiesResponse;
 import java.io.IOException;
-import java.util.List;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -32,7 +31,7 @@ public class FacilityClient {
     public Facility create(BaseFacility request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("facility")
+                .addPathSegments("medical/v1/facility")
                 .build();
         RequestBody body;
         try {
@@ -74,7 +73,7 @@ public class FacilityClient {
     public Facility get(String id, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("facility")
+                .addPathSegments("medical/v1/facility")
                 .addPathSegment(id)
                 .build();
         Request okhttpRequest = new Request.Builder()
@@ -110,7 +109,7 @@ public class FacilityClient {
     public Facility update(String id, BaseFacility request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("facility")
+                .addPathSegments("medical/v1/facility")
                 .addPathSegment(id)
                 .build();
         RequestBody body;
@@ -150,10 +149,10 @@ public class FacilityClient {
     /**
      * Lists all of your Facilities.
      */
-    public List<Facility> list(RequestOptions requestOptions) {
+    public ListFacilitiesResponse list(RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("facility")
+                .addPathSegments("medical/v1/facility")
                 .build();
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
@@ -165,8 +164,7 @@ public class FacilityClient {
             Response response =
                     clientOptions.httpClient().newCall(okhttpRequest).execute();
             if (response.isSuccessful()) {
-                return ObjectMappers.JSON_MAPPER.readValue(
-                        response.body().string(), new TypeReference<List<Facility>>() {});
+                return ObjectMappers.JSON_MAPPER.readValue(response.body().string(), ListFacilitiesResponse.class);
             }
             throw new ApiError(
                     response.code(),
@@ -179,7 +177,7 @@ public class FacilityClient {
     /**
      * Lists all of your Facilities.
      */
-    public List<Facility> list() {
+    public ListFacilitiesResponse list() {
         return list(null);
     }
 }

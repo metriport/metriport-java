@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.patient.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +12,9 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,6 +37,8 @@ public final class Patient implements IBasePatient {
 
     private final String id;
 
+    private final Map<String, Object> additionalProperties;
+
     private Patient(
             String firstName,
             String lastName,
@@ -41,7 +47,8 @@ public final class Patient implements IBasePatient {
             Optional<List<PersonalIdentifier>> personalIdentifiers,
             Optional<Addresses> address,
             Optional<Contacts> contact,
-            String id) {
+            String id,
+            Map<String, Object> additionalProperties) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;
@@ -50,6 +57,7 @@ public final class Patient implements IBasePatient {
         this.address = address;
         this.contact = contact;
         this.id = id;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -114,7 +122,8 @@ public final class Patient implements IBasePatient {
     }
 
     /**
-     * @return The ID assigned to this Patient. This ID will be used to uniquely identify this Patient in medical documents.
+     * @return The ID assigned to this Patient. This ID will be used to uniquely
+     * identify this Patient in medical documents.
      */
     @JsonProperty("id")
     public String getId() {
@@ -125,6 +134,11 @@ public final class Patient implements IBasePatient {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof Patient && equalTo((Patient) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(Patient other) {
@@ -217,6 +231,9 @@ public final class Patient implements IBasePatient {
 
         private Optional<List<PersonalIdentifier>> personalIdentifiers = Optional.empty();
 
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
         private Builder() {}
 
         @Override
@@ -280,7 +297,8 @@ public final class Patient implements IBasePatient {
         }
 
         /**
-         * <p>The ID assigned to this Patient. This ID will be used to uniquely identify this Patient in medical documents.</p>
+         * <p>The ID assigned to this Patient. This ID will be used to uniquely
+         * identify this Patient in medical documents.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @Override
@@ -336,7 +354,16 @@ public final class Patient implements IBasePatient {
 
         @Override
         public Patient build() {
-            return new Patient(firstName, lastName, dob, genderAtBirth, personalIdentifiers, address, contact, id);
+            return new Patient(
+                    firstName,
+                    lastName,
+                    dob,
+                    genderAtBirth,
+                    personalIdentifiers,
+                    address,
+                    contact,
+                    id,
+                    additionalProperties);
         }
     }
 }

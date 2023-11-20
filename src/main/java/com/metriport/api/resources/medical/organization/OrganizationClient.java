@@ -7,9 +7,12 @@ import com.metriport.api.core.ApiError;
 import com.metriport.api.core.ClientOptions;
 import com.metriport.api.core.ObjectMappers;
 import com.metriport.api.core.RequestOptions;
-import com.metriport.api.resources.medical.organization.types.BaseOrganization;
+import com.metriport.api.resources.medical.organization.requests.OrganizationUpdateRequest;
 import com.metriport.api.resources.medical.organization.types.Organization;
+import com.metriport.api.resources.medical.organization.types.OrganizationCreate;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -27,10 +30,10 @@ public class OrganizationClient {
     /**
      * Registers your Organization in Metriport.
      */
-    public Organization create(BaseOrganization request, RequestOptions requestOptions) {
+    public Organization create(OrganizationCreate request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("organization")
+                .addPathSegments("medical/v1/organization")
                 .build();
         RequestBody body;
         try {
@@ -62,7 +65,7 @@ public class OrganizationClient {
     /**
      * Registers your Organization in Metriport.
      */
-    public Organization create(BaseOrganization request) {
+    public Organization create(OrganizationCreate request) {
         return create(request, null);
     }
 
@@ -72,7 +75,7 @@ public class OrganizationClient {
     public Organization get(RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("organization")
+                .addPathSegments("medical/v1/organization")
                 .build();
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
@@ -104,25 +107,32 @@ public class OrganizationClient {
     /**
      * Updates your Organization's details.
      */
-    public Organization update(String id, BaseOrganization request, RequestOptions requestOptions) {
+    public Organization update(String id, OrganizationUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("organization")
+                .addPathSegments("medical/v1/organization")
                 .addPathSegment(id)
                 .build();
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("name", request.getName());
+        properties.put("type", request.getType());
+        properties.put("location", request.getLocation());
         RequestBody body;
         try {
             body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaType.parse("application/json"));
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(properties), MediaType.parse("application/json"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("PUT", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .build();
+                .addHeader("Content-Type", "application/json");
+        if (request.getETag().isPresent()) {
+            _requestBuilder.addHeader("ETag", request.getETag().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         try {
             Response response =
                     clientOptions.httpClient().newCall(okhttpRequest).execute();
@@ -140,7 +150,7 @@ public class OrganizationClient {
     /**
      * Updates your Organization's details.
      */
-    public Organization update(String id, BaseOrganization request) {
+    public Organization update(String id, OrganizationUpdateRequest request) {
         return update(id, request, null);
     }
 }

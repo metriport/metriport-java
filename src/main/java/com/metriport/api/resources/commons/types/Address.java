@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.commons.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,19 +32,23 @@ public final class Address {
 
     private final String country;
 
+    private final Map<String, Object> additionalProperties;
+
     private Address(
             String addressLine1,
             Optional<String> addressLine2,
             String city,
             UsState state,
             String zip,
-            String country) {
+            String country,
+            Map<String, Object> additionalProperties) {
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
         this.city = city;
         this.state = state;
         this.zip = zip;
         this.country = country;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -95,6 +103,11 @@ public final class Address {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof Address && equalTo((Address) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(Address other) {
@@ -164,6 +177,9 @@ public final class Address {
         private String country;
 
         private Optional<String> addressLine2 = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -252,7 +268,7 @@ public final class Address {
 
         @Override
         public Address build() {
-            return new Address(addressLine1, addressLine2, city, state, zip, country);
+            return new Address(addressLine1, addressLine2, city, state, zip, country, additionalProperties);
         }
     }
 }

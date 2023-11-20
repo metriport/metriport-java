@@ -40,6 +40,7 @@ public class FhirClient {
             String id, GetPatientConsolidatedData request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
+                .addPathSegments("medical/v1")
                 .addPathSegments("patient")
                 .addPathSegment(id)
                 .addPathSegments("consolidated/query");
@@ -86,6 +87,7 @@ public class FhirClient {
     public GetConsolidatedQueryStatusResponse getConsolidatedQueryStatus(String id, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
+                .addPathSegments("medical/v1")
                 .addPathSegments("patient")
                 .addPathSegment(id)
                 .addPathSegments("consolidated/query")
@@ -132,6 +134,7 @@ public class FhirClient {
             String id, CountPatientConsolidateData request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
+                .addPathSegments("medical/v1")
                 .addPathSegments("patient")
                 .addPathSegment(id)
                 .addPathSegments("consolidated/count");

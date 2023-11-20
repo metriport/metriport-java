@@ -3,28 +3,37 @@
  */
 package com.metriport.api.resources.medical.patient.requests;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonDeserialize(builder = PatientList.Builder.class)
 public final class PatientList {
-    private final String facilityId;
+    private final Optional<String> facilityId;
 
-    private PatientList(String facilityId) {
+    private final Map<String, Object> additionalProperties;
+
+    private PatientList(Optional<String> facilityId, Map<String, Object> additionalProperties) {
         this.facilityId = facilityId;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
      * @return The ID of the Facility where the patient is receiving care.
      */
     @JsonProperty("facilityId")
-    public String getFacilityId() {
+    public Optional<String> getFacilityId() {
         return facilityId;
     }
 
@@ -32,6 +41,11 @@ public final class PatientList {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof PatientList && equalTo((PatientList) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(PatientList other) {
@@ -48,46 +62,37 @@ public final class PatientList {
         return ObjectMappers.stringify(this);
     }
 
-    public static FacilityIdStage builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public interface FacilityIdStage {
-        _FinalStage facilityId(String facilityId);
-
-        Builder from(PatientList other);
-    }
-
-    public interface _FinalStage {
-        PatientList build();
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements FacilityIdStage, _FinalStage {
-        private String facilityId;
+    public static final class Builder {
+        private Optional<String> facilityId = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
-        @Override
         public Builder from(PatientList other) {
             facilityId(other.getFacilityId());
             return this;
         }
 
-        /**
-         * <p>The ID of the Facility where the patient is receiving care.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @Override
-        @JsonSetter("facilityId")
-        public _FinalStage facilityId(String facilityId) {
+        @JsonSetter(value = "facilityId", nulls = Nulls.SKIP)
+        public Builder facilityId(Optional<String> facilityId) {
             this.facilityId = facilityId;
             return this;
         }
 
-        @Override
+        public Builder facilityId(String facilityId) {
+            this.facilityId = Optional.of(facilityId);
+            return this;
+        }
+
         public PatientList build() {
-            return new PatientList(facilityId);
+            return new PatientList(facilityId, additionalProperties);
         }
     }
 }

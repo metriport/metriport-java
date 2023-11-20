@@ -12,40 +12,33 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonDeserialize(builder = Period.Builder.class)
-public final class Period {
-    private final Optional<String> start;
-
-    private final Optional<String> end;
+@JsonDeserialize(builder = ListPatientsResponse.Builder.class)
+public final class ListPatientsResponse {
+    private final List<Patient> patients;
 
     private final Map<String, Object> additionalProperties;
 
-    private Period(Optional<String> start, Optional<String> end, Map<String, Object> additionalProperties) {
-        this.start = start;
-        this.end = end;
+    private ListPatientsResponse(List<Patient> patients, Map<String, Object> additionalProperties) {
+        this.patients = patients;
         this.additionalProperties = additionalProperties;
     }
 
-    @JsonProperty("start")
-    public Optional<String> getStart() {
-        return start;
-    }
-
-    @JsonProperty("end")
-    public Optional<String> getEnd() {
-        return end;
+    @JsonProperty("patients")
+    public List<Patient> getPatients() {
+        return patients;
     }
 
     @Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof Period && equalTo((Period) other);
+        return other instanceof ListPatientsResponse && equalTo((ListPatientsResponse) other);
     }
 
     @JsonAnyGetter
@@ -53,13 +46,13 @@ public final class Period {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(Period other) {
-        return start.equals(other.start) && end.equals(other.end);
+    private boolean equalTo(ListPatientsResponse other) {
+        return patients.equals(other.patients);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.start, this.end);
+        return Objects.hash(this.patients);
     }
 
     @Override
@@ -73,45 +66,37 @@ public final class Period {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<String> start = Optional.empty();
-
-        private Optional<String> end = Optional.empty();
+        private List<Patient> patients = new ArrayList<>();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
-        public Builder from(Period other) {
-            start(other.getStart());
-            end(other.getEnd());
+        public Builder from(ListPatientsResponse other) {
+            patients(other.getPatients());
             return this;
         }
 
-        @JsonSetter(value = "start", nulls = Nulls.SKIP)
-        public Builder start(Optional<String> start) {
-            this.start = start;
+        @JsonSetter(value = "patients", nulls = Nulls.SKIP)
+        public Builder patients(List<Patient> patients) {
+            this.patients.clear();
+            this.patients.addAll(patients);
             return this;
         }
 
-        public Builder start(String start) {
-            this.start = Optional.of(start);
+        public Builder addPatients(Patient patients) {
+            this.patients.add(patients);
             return this;
         }
 
-        @JsonSetter(value = "end", nulls = Nulls.SKIP)
-        public Builder end(Optional<String> end) {
-            this.end = end;
+        public Builder addAllPatients(List<Patient> patients) {
+            this.patients.addAll(patients);
             return this;
         }
 
-        public Builder end(String end) {
-            this.end = Optional.of(end);
-            return this;
-        }
-
-        public Period build() {
-            return new Period(start, end, additionalProperties);
+        public ListPatientsResponse build() {
+            return new ListPatientsResponse(patients, additionalProperties);
         }
     }
 }

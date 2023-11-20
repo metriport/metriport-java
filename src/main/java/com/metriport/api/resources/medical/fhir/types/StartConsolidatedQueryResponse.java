@@ -3,12 +3,16 @@
  */
 package com.metriport.api.resources.medical.fhir.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -16,8 +20,12 @@ import java.util.Objects;
 public final class StartConsolidatedQueryResponse {
     private final PatientConsolidatedDataStatus status;
 
-    private StartConsolidatedQueryResponse(PatientConsolidatedDataStatus status) {
+    private final Map<String, Object> additionalProperties;
+
+    private StartConsolidatedQueryResponse(
+            PatientConsolidatedDataStatus status, Map<String, Object> additionalProperties) {
         this.status = status;
+        this.additionalProperties = additionalProperties;
     }
 
     @JsonProperty("status")
@@ -29,6 +37,11 @@ public final class StartConsolidatedQueryResponse {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof StartConsolidatedQueryResponse && equalTo((StartConsolidatedQueryResponse) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(StartConsolidatedQueryResponse other) {
@@ -63,6 +76,9 @@ public final class StartConsolidatedQueryResponse {
     public static final class Builder implements StatusStage, _FinalStage {
         private PatientConsolidatedDataStatus status;
 
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
         private Builder() {}
 
         @Override
@@ -80,7 +96,7 @@ public final class StartConsolidatedQueryResponse {
 
         @Override
         public StartConsolidatedQueryResponse build() {
-            return new StartConsolidatedQueryResponse(status);
+            return new StartConsolidatedQueryResponse(status, additionalProperties);
         }
     }
 }

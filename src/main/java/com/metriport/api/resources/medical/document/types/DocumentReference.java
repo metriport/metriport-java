@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.document.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,6 +13,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -35,6 +39,8 @@ public final class DocumentReference {
 
     private final Optional<CodeableConcept> type;
 
+    private final Map<String, Object> additionalProperties;
+
     private DocumentReference(
             String id,
             String fileName,
@@ -44,7 +50,8 @@ public final class DocumentReference {
             Optional<OffsetDateTime> indexed,
             Optional<String> mimeType,
             Optional<Integer> size,
-            Optional<CodeableConcept> type) {
+            Optional<CodeableConcept> type,
+            Map<String, Object> additionalProperties) {
         this.id = id;
         this.fileName = fileName;
         this.location = location;
@@ -54,6 +61,7 @@ public final class DocumentReference {
         this.mimeType = mimeType;
         this.size = size;
         this.type = type;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -132,6 +140,11 @@ public final class DocumentReference {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof DocumentReference && equalTo((DocumentReference) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(DocumentReference other) {
@@ -230,6 +243,9 @@ public final class DocumentReference {
         private Optional<String> status = Optional.empty();
 
         private Optional<String> description = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -384,7 +400,8 @@ public final class DocumentReference {
 
         @Override
         public DocumentReference build() {
-            return new DocumentReference(id, fileName, location, description, status, indexed, mimeType, size, type);
+            return new DocumentReference(
+                    id, fileName, location, description, status, indexed, mimeType, size, type, additionalProperties);
         }
     }
 }

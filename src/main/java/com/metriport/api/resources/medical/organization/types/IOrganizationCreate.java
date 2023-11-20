@@ -5,7 +5,7 @@ package com.metriport.api.resources.medical.organization.types;
 
 import com.metriport.api.resources.commons.types.Address;
 
-public interface IBaseOrganization {
+public interface IOrganizationCreate {
     String getName();
 
     OrgType getType();

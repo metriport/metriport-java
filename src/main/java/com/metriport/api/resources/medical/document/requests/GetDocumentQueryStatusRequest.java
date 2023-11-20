@@ -3,12 +3,16 @@
  */
 package com.metriport.api.resources.medical.document.requests;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -16,8 +20,11 @@ import java.util.Objects;
 public final class GetDocumentQueryStatusRequest {
     private final String patientId;
 
-    private GetDocumentQueryStatusRequest(String patientId) {
+    private final Map<String, Object> additionalProperties;
+
+    private GetDocumentQueryStatusRequest(String patientId, Map<String, Object> additionalProperties) {
         this.patientId = patientId;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -32,6 +39,11 @@ public final class GetDocumentQueryStatusRequest {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof GetDocumentQueryStatusRequest && equalTo((GetDocumentQueryStatusRequest) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(GetDocumentQueryStatusRequest other) {
@@ -66,6 +78,9 @@ public final class GetDocumentQueryStatusRequest {
     public static final class Builder implements PatientIdStage, _FinalStage {
         private String patientId;
 
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
         private Builder() {}
 
         @Override
@@ -87,7 +102,7 @@ public final class GetDocumentQueryStatusRequest {
 
         @Override
         public GetDocumentQueryStatusRequest build() {
-            return new GetDocumentQueryStatusRequest(patientId);
+            return new GetDocumentQueryStatusRequest(patientId, additionalProperties);
         }
     }
 }

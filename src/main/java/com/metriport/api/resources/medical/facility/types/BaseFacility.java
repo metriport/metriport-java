@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.facility.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,6 +13,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
 import com.metriport.api.resources.commons.types.Address;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,12 +31,21 @@ public final class BaseFacility implements IBaseFacility {
 
     private final Address address;
 
-    private BaseFacility(String name, String npi, Optional<String> tin, Optional<Boolean> active, Address address) {
+    private final Map<String, Object> additionalProperties;
+
+    private BaseFacility(
+            String name,
+            String npi,
+            Optional<String> tin,
+            Optional<Boolean> active,
+            Address address,
+            Map<String, Object> additionalProperties) {
         this.name = name;
         this.npi = npi;
         this.tin = tin;
         this.active = active;
         this.address = address;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -81,6 +94,11 @@ public final class BaseFacility implements IBaseFacility {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof BaseFacility && equalTo((BaseFacility) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(BaseFacility other) {
@@ -142,6 +160,9 @@ public final class BaseFacility implements IBaseFacility {
         private Optional<Boolean> active = Optional.empty();
 
         private Optional<String> tin = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -220,7 +241,7 @@ public final class BaseFacility implements IBaseFacility {
 
         @Override
         public BaseFacility build() {
-            return new BaseFacility(name, npi, tin, active, address);
+            return new BaseFacility(name, npi, tin, active, address, additionalProperties);
         }
     }
 }

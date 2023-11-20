@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.fhir.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,10 +26,14 @@ public final class ConsolidatedCountResponse {
 
     private final Filter filter;
 
-    private ConsolidatedCountResponse(int total, Map<String, Integer> resources, Filter filter) {
+    private final Map<String, Object> additionalProperties;
+
+    private ConsolidatedCountResponse(
+            int total, Map<String, Integer> resources, Filter filter, Map<String, Object> additionalProperties) {
         this.total = total;
         this.resources = resources;
         this.filter = filter;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -59,6 +66,11 @@ public final class ConsolidatedCountResponse {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof ConsolidatedCountResponse && equalTo((ConsolidatedCountResponse) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(ConsolidatedCountResponse other) {
@@ -106,6 +118,9 @@ public final class ConsolidatedCountResponse {
         private Filter filter;
 
         private Map<String, Integer> resources = new LinkedHashMap<>();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -173,7 +188,7 @@ public final class ConsolidatedCountResponse {
 
         @Override
         public ConsolidatedCountResponse build() {
-            return new ConsolidatedCountResponse(total, resources, filter);
+            return new ConsolidatedCountResponse(total, resources, filter, additionalProperties);
         }
     }
 }

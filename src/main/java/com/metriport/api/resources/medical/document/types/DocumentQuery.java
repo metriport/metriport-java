@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.document.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,9 +24,13 @@ public final class DocumentQuery {
 
     private final Optional<Progress> convert;
 
-    private DocumentQuery(Optional<Progress> download, Optional<Progress> convert) {
+    private final Map<String, Object> additionalProperties;
+
+    private DocumentQuery(
+            Optional<Progress> download, Optional<Progress> convert, Map<String, Object> additionalProperties) {
         this.download = download;
         this.convert = convert;
+        this.additionalProperties = additionalProperties;
     }
 
     @JsonProperty("download")
@@ -39,6 +47,11 @@ public final class DocumentQuery {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof DocumentQuery && equalTo((DocumentQuery) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(DocumentQuery other) {
@@ -64,6 +77,9 @@ public final class DocumentQuery {
         private Optional<Progress> download = Optional.empty();
 
         private Optional<Progress> convert = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -96,7 +112,7 @@ public final class DocumentQuery {
         }
 
         public DocumentQuery build() {
-            return new DocumentQuery(download, convert);
+            return new DocumentQuery(download, convert, additionalProperties);
         }
     }
 }

@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.fhir.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,9 +24,13 @@ public final class GetConsolidatedQueryStatusResponse {
 
     private final Optional<String> message;
 
-    private GetConsolidatedQueryStatusResponse(PatientConsolidatedDataStatus status, Optional<String> message) {
+    private final Map<String, Object> additionalProperties;
+
+    private GetConsolidatedQueryStatusResponse(
+            PatientConsolidatedDataStatus status, Optional<String> message, Map<String, Object> additionalProperties) {
         this.status = status;
         this.message = message;
+        this.additionalProperties = additionalProperties;
     }
 
     @JsonProperty("status")
@@ -40,6 +48,11 @@ public final class GetConsolidatedQueryStatusResponse {
         if (this == other) return true;
         return other instanceof GetConsolidatedQueryStatusResponse
                 && equalTo((GetConsolidatedQueryStatusResponse) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(GetConsolidatedQueryStatusResponse other) {
@@ -80,6 +93,9 @@ public final class GetConsolidatedQueryStatusResponse {
 
         private Optional<String> message = Optional.empty();
 
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
         private Builder() {}
 
         @Override
@@ -111,7 +127,7 @@ public final class GetConsolidatedQueryStatusResponse {
 
         @Override
         public GetConsolidatedQueryStatusResponse build() {
-            return new GetConsolidatedQueryStatusResponse(status, message);
+            return new GetConsolidatedQueryStatusResponse(status, message, additionalProperties);
         }
     }
 }

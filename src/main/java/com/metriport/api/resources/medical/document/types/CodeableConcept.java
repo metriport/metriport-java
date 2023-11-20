@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.document.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +12,9 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -21,9 +25,13 @@ public final class CodeableConcept {
 
     private final Optional<String> text;
 
-    private CodeableConcept(Optional<List<Coding>> coding, Optional<String> text) {
+    private final Map<String, Object> additionalProperties;
+
+    private CodeableConcept(
+            Optional<List<Coding>> coding, Optional<String> text, Map<String, Object> additionalProperties) {
         this.coding = coding;
         this.text = text;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -46,6 +54,11 @@ public final class CodeableConcept {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof CodeableConcept && equalTo((CodeableConcept) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(CodeableConcept other) {
@@ -71,6 +84,9 @@ public final class CodeableConcept {
         private Optional<List<Coding>> coding = Optional.empty();
 
         private Optional<String> text = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -103,7 +119,7 @@ public final class CodeableConcept {
         }
 
         public CodeableConcept build() {
-            return new CodeableConcept(coding, text);
+            return new CodeableConcept(coding, text, additionalProperties);
         }
     }
 }

@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.document.requests;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,12 +28,19 @@ public final class ListDocumentsRequest {
 
     private final Optional<String> dateTo;
 
+    private final Map<String, Object> additionalProperties;
+
     private ListDocumentsRequest(
-            String patientId, String facilityId, Optional<String> dateFrom, Optional<String> dateTo) {
+            String patientId,
+            String facilityId,
+            Optional<String> dateFrom,
+            Optional<String> dateTo,
+            Map<String, Object> additionalProperties) {
         this.patientId = patientId;
         this.facilityId = facilityId;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -68,6 +79,11 @@ public final class ListDocumentsRequest {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof ListDocumentsRequest && equalTo((ListDocumentsRequest) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(ListDocumentsRequest other) {
@@ -122,6 +138,9 @@ public final class ListDocumentsRequest {
         private Optional<String> dateTo = Optional.empty();
 
         private Optional<String> dateFrom = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -192,7 +211,7 @@ public final class ListDocumentsRequest {
 
         @Override
         public ListDocumentsRequest build() {
-            return new ListDocumentsRequest(patientId, facilityId, dateFrom, dateTo);
+            return new ListDocumentsRequest(patientId, facilityId, dateFrom, dateTo, additionalProperties);
         }
     }
 }

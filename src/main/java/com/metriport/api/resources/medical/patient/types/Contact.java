@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.patient.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,7 +13,9 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,10 +28,17 @@ public final class Contact {
 
     private final List<String> facilityIds;
 
-    private Contact(Optional<String> phone, Optional<String> email, List<String> facilityIds) {
+    private final Map<String, Object> additionalProperties;
+
+    private Contact(
+            Optional<String> phone,
+            Optional<String> email,
+            List<String> facilityIds,
+            Map<String, Object> additionalProperties) {
         this.phone = phone;
         this.email = email;
         this.facilityIds = facilityIds;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -60,6 +71,11 @@ public final class Contact {
         return other instanceof Contact && equalTo((Contact) other);
     }
 
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
     private boolean equalTo(Contact other) {
         return phone.equals(other.phone) && email.equals(other.email) && facilityIds.equals(other.facilityIds);
     }
@@ -85,6 +101,9 @@ public final class Contact {
         private Optional<String> email = Optional.empty();
 
         private List<String> facilityIds = new ArrayList<>();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -135,7 +154,7 @@ public final class Contact {
         }
 
         public Contact build() {
-            return new Contact(phone, email, facilityIds);
+            return new Contact(phone, email, facilityIds, additionalProperties);
         }
     }
 }

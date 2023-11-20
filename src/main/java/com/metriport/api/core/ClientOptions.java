@@ -29,7 +29,7 @@ public final class ClientOptions {
                 "X-Fern-SDK-Name",
                 "com.metriport.fern:api-sdk",
                 "X-Fern-SDK-Version",
-                "0.1.8",
+                "8.0.0-alpha1",
                 "X-Fern-Language",
                 "JAVA"));
         this.headerSuppliers = headerSuppliers;

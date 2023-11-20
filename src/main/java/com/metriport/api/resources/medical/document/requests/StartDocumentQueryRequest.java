@@ -3,12 +3,16 @@
  */
 package com.metriport.api.resources.medical.document.requests;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -18,9 +22,12 @@ public final class StartDocumentQueryRequest {
 
     private final String facilityId;
 
-    private StartDocumentQueryRequest(String patientId, String facilityId) {
+    private final Map<String, Object> additionalProperties;
+
+    private StartDocumentQueryRequest(String patientId, String facilityId, Map<String, Object> additionalProperties) {
         this.patientId = patientId;
         this.facilityId = facilityId;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -43,6 +50,11 @@ public final class StartDocumentQueryRequest {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof StartDocumentQueryRequest && equalTo((StartDocumentQueryRequest) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(StartDocumentQueryRequest other) {
@@ -83,6 +95,9 @@ public final class StartDocumentQueryRequest {
 
         private String facilityId;
 
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
         private Builder() {}
 
         @Override
@@ -116,7 +131,7 @@ public final class StartDocumentQueryRequest {
 
         @Override
         public StartDocumentQueryRequest build() {
-            return new StartDocumentQueryRequest(patientId, facilityId);
+            return new StartDocumentQueryRequest(patientId, facilityId, additionalProperties);
         }
     }
 }

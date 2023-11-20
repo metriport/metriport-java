@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.fhir.requests;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -22,11 +26,17 @@ public final class CountPatientConsolidateData {
 
     private final Optional<String> dateTo;
 
+    private final Map<String, Object> additionalProperties;
+
     private CountPatientConsolidateData(
-            Optional<String> resources, Optional<String> dateFrom, Optional<String> dateTo) {
+            Optional<String> resources,
+            Optional<String> dateFrom,
+            Optional<String> dateTo,
+            Map<String, Object> additionalProperties) {
         this.resources = resources;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -64,6 +74,11 @@ public final class CountPatientConsolidateData {
         return other instanceof CountPatientConsolidateData && equalTo((CountPatientConsolidateData) other);
     }
 
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
     private boolean equalTo(CountPatientConsolidateData other) {
         return resources.equals(other.resources) && dateFrom.equals(other.dateFrom) && dateTo.equals(other.dateTo);
     }
@@ -89,6 +104,9 @@ public final class CountPatientConsolidateData {
         private Optional<String> dateFrom = Optional.empty();
 
         private Optional<String> dateTo = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -133,7 +151,7 @@ public final class CountPatientConsolidateData {
         }
 
         public CountPatientConsolidateData build() {
-            return new CountPatientConsolidateData(resources, dateFrom, dateTo);
+            return new CountPatientConsolidateData(resources, dateFrom, dateTo, additionalProperties);
         }
     }
 }

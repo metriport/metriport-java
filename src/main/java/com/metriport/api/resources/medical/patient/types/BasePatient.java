@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.patient.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +12,9 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -31,6 +35,8 @@ public final class BasePatient implements IBasePatient {
 
     private final Optional<Contacts> contact;
 
+    private final Map<String, Object> additionalProperties;
+
     private BasePatient(
             String firstName,
             String lastName,
@@ -38,7 +44,8 @@ public final class BasePatient implements IBasePatient {
             String genderAtBirth,
             Optional<List<PersonalIdentifier>> personalIdentifiers,
             Optional<Addresses> address,
-            Optional<Contacts> contact) {
+            Optional<Contacts> contact,
+            Map<String, Object> additionalProperties) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;
@@ -46,6 +53,7 @@ public final class BasePatient implements IBasePatient {
         this.personalIdentifiers = personalIdentifiers;
         this.address = address;
         this.contact = contact;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -113,6 +121,11 @@ public final class BasePatient implements IBasePatient {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof BasePatient && equalTo((BasePatient) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(BasePatient other) {
@@ -196,6 +209,9 @@ public final class BasePatient implements IBasePatient {
         private Optional<Addresses> address = Optional.empty();
 
         private Optional<List<PersonalIdentifier>> personalIdentifiers = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -304,7 +320,15 @@ public final class BasePatient implements IBasePatient {
 
         @Override
         public BasePatient build() {
-            return new BasePatient(firstName, lastName, dob, genderAtBirth, personalIdentifiers, address, contact);
+            return new BasePatient(
+                    firstName,
+                    lastName,
+                    dob,
+                    genderAtBirth,
+                    personalIdentifiers,
+                    address,
+                    contact,
+                    additionalProperties);
         }
     }
 }

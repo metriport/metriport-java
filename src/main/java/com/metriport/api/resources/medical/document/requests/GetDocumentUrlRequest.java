@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.document.requests;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,6 +13,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
 import com.metriport.api.resources.medical.document.types.ConversionType;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -21,9 +25,13 @@ public final class GetDocumentUrlRequest {
 
     private final Optional<ConversionType> conversionType;
 
-    private GetDocumentUrlRequest(String fileName, Optional<ConversionType> conversionType) {
+    private final Map<String, Object> additionalProperties;
+
+    private GetDocumentUrlRequest(
+            String fileName, Optional<ConversionType> conversionType, Map<String, Object> additionalProperties) {
         this.fileName = fileName;
         this.conversionType = conversionType;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -47,6 +55,11 @@ public final class GetDocumentUrlRequest {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof GetDocumentUrlRequest && equalTo((GetDocumentUrlRequest) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(GetDocumentUrlRequest other) {
@@ -86,6 +99,9 @@ public final class GetDocumentUrlRequest {
         private String fileName;
 
         private Optional<ConversionType> conversionType = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -127,7 +143,7 @@ public final class GetDocumentUrlRequest {
 
         @Override
         public GetDocumentUrlRequest build() {
-            return new GetDocumentUrlRequest(fileName, conversionType);
+            return new GetDocumentUrlRequest(fileName, conversionType, additionalProperties);
         }
     }
 }

@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.document.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,15 +28,19 @@ public final class Progress {
 
     private final Optional<Integer> errors;
 
+    private final Map<String, Object> additionalProperties;
+
     private Progress(
             DocumentQueryStatus status,
             Optional<Integer> total,
             Optional<Integer> successful,
-            Optional<Integer> errors) {
+            Optional<Integer> errors,
+            Map<String, Object> additionalProperties) {
         this.status = status;
         this.total = total;
         this.successful = successful;
         this.errors = errors;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -71,6 +79,11 @@ public final class Progress {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof Progress && equalTo((Progress) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(Progress other) {
@@ -125,6 +138,9 @@ public final class Progress {
         private Optional<Integer> successful = Optional.empty();
 
         private Optional<Integer> total = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -201,7 +217,7 @@ public final class Progress {
 
         @Override
         public Progress build() {
-            return new Progress(status, total, successful, errors);
+            return new Progress(status, total, successful, errors, additionalProperties);
         }
     }
 }

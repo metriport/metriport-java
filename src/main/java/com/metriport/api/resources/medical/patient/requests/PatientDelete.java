@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.patient.requests;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,8 +22,11 @@ import java.util.Optional;
 public final class PatientDelete {
     private final Optional<String> facilityId;
 
-    private PatientDelete(Optional<String> facilityId) {
+    private final Map<String, Object> additionalProperties;
+
+    private PatientDelete(Optional<String> facilityId, Map<String, Object> additionalProperties) {
         this.facilityId = facilityId;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -34,6 +41,11 @@ public final class PatientDelete {
     public boolean equals(Object other) {
         if (this == other) return true;
         return other instanceof PatientDelete && equalTo((PatientDelete) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
     }
 
     private boolean equalTo(PatientDelete other) {
@@ -58,6 +70,9 @@ public final class PatientDelete {
     public static final class Builder {
         private Optional<String> facilityId = Optional.empty();
 
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
         private Builder() {}
 
         public Builder from(PatientDelete other) {
@@ -77,7 +92,7 @@ public final class PatientDelete {
         }
 
         public PatientDelete build() {
-            return new PatientDelete(facilityId);
+            return new PatientDelete(facilityId, additionalProperties);
         }
     }
 }

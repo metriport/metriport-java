@@ -3,6 +3,8 @@
  */
 package com.metriport.api.resources.medical.document.types;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.metriport.api.core.ObjectMappers;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -22,10 +26,17 @@ public final class Coding {
 
     private final Optional<String> display;
 
-    private Coding(Optional<String> system, Optional<String> code, Optional<String> display) {
+    private final Map<String, Object> additionalProperties;
+
+    private Coding(
+            Optional<String> system,
+            Optional<String> code,
+            Optional<String> display,
+            Map<String, Object> additionalProperties) {
         this.system = system;
         this.code = code;
         this.display = display;
+        this.additionalProperties = additionalProperties;
     }
 
     /**
@@ -58,6 +69,11 @@ public final class Coding {
         return other instanceof Coding && equalTo((Coding) other);
     }
 
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
     private boolean equalTo(Coding other) {
         return system.equals(other.system) && code.equals(other.code) && display.equals(other.display);
     }
@@ -83,6 +99,9 @@ public final class Coding {
         private Optional<String> code = Optional.empty();
 
         private Optional<String> display = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
@@ -127,7 +146,7 @@ public final class Coding {
         }
 
         public Coding build() {
-            return new Coding(system, code, display);
+            return new Coding(system, code, display, additionalProperties);
         }
     }
 }
