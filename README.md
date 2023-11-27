@@ -1,7 +1,7 @@
 # Metriport Java Library
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.metriport/metriport-java)](https://central.sonatype.com/artifact/com.metriport/metriport-java)
-[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen)](https://github.com/fern-api/fern)
+[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-SDK%20generated%20by%20Fern-brightgreen)](https://buildwithfern.com/?utm_source=metriport/metriport-java/readme)
 
 ## Documentation
 
