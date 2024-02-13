@@ -34,29 +34,43 @@ Add the dependency in your `pom.xml`:
 ## Usage
 Both the Medical and Devices APIs are accessible from the SDK.
 
-```typescript
+```java
+package com.metriport.test;
+
+import io.github.cdimascio.dotenv.Dotenv;
 import com.metriport.api.Metriport;
+import com.metriport.api.resources.medical.facility.types.BaseFacility;
+import com.metriport.api.resources.commons.types.UsState;
 import com.metriport.api.resources.commons.types.Address;
-import com.metriport.api.resources.medical.organization.types.BaseOrganization;
 
-Metriport metriport = Metriport.builder()
-  .apiKey("YOUR_API_KEY")
-  .build();
-  
-var response = metriport.medical().organization().create(BaseOrganization.builder()
-  .name("Metriport Inc.")
-  .type(OrgType.PostAcuteCare)
-  .location(Address.builder()
-    .addressLine1("2261 Market Street")
-    .addressLine1("#4818")
-    .city("San Francisco")
-    .state(UsState.CA)
-    .zip("94114")
-    .country("USA")
-    .build())
-  .build());
+public class CreateFacility {
+    public static void main(String[] args) {
+        Dotenv dotenv = Dotenv.load();
 
-System.out.printlin("Received response!" + response);
+        Metriport metriport = Metriport.builder()
+            .apiKey(dotenv.get("API_KEY"))
+            .url(dotenv.get("BASE_URL"))
+            .build();
+
+        Address address = Address.builder()
+            .addressLine1("2261 Market Street")
+            .city("San Francisco")
+            .state(UsState.CA)
+            .zip("12345")
+            .country("USA")
+            .addressLine2("#4818")
+            .build();
+
+        BaseFacility newFacility = BaseFacility.builder()
+            .name("New Facility")
+            .npi("1234567893")
+            .address(address)
+            .build();
+
+        var response = metriport.medical().facility().create(newFacility);
+        System.out.println("Created new facility!" + response);
+    }
+}
 ```
 
 ### Handling Errors
@@ -64,7 +78,7 @@ When the API returns a non-success status code (4xx or 5xx response),
 a subclass of [ApiError](src/main/java/com/metriport/api/core/ApiError.java)
 will be thrown:
 
-```ts
+```java
 import com.metriport.api.core.ApiError;
 
 try {
@@ -89,17 +103,24 @@ name, type and location.
 import com.metriport.api.resources.medical.organization.types.BaseOrganization;
 
 // Doesn't compile
-BaseOrganization org = BaseOrganization.builder()
-  .name(...)
-  .type(...)
-  .build(); 
+BaseOrganization org = Address.builder()
+    .addressLine1("2261 Market Street")
+    .addressLine2("#4818")
+    .city("San Francisco")
+    .state(UsState.CA)
+    .zip("12345")
+    .country("USA")
+    .build();
 
 // Compiles
-BaseOrganization org = BaseOrganization.builder()
-  .name(...)
-  .type(...)
-  .location(...)
-  .build(); 
+BaseOrganization org = Address.builder()
+    .addressLine1("2261 Market Street")
+    .city("San Francisco")
+    .state(UsState.CA)
+    .zip("12345")
+    .country("USA")
+    .addressLine2("#4818")
+    .build();
 ```
 
 ## Beta status
